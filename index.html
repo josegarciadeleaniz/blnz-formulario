@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador BLNZ - Suelo Público</title>
+    <style>
+        /* Estilos generales */
+        :root {
+            --primary-color: #D4AF37;
+            --secondary-color: #E63946;
+            --text-color: #000;
+            --bg-color: #fff;
+            --light-gray: #f9f9f9;
+            --medium-gray: #ddd;
+            --dark-gray: #555;
+        }
+        
+        body {
+            font-family: 'Forum', serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .blnz-section {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .blnz-section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        
+        /* Contenedores flex */
+        .blnz-flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .blnz-chart-container, .blnz-controls-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* Controles */
+        .blnz-control-group {
+            margin-top: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .blnz-control-group label {
+            display: block;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .blnz-var-title {
+            display: block;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .blnz-var-desc {
+            display: block;
+            font-size: 0.75em;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        
+        .blnz-materials-list {
+            font-size: 0.7em;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .blnz-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .blnz-slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: var(--medium-gray);
+            border-radius: 2px;
+            outline: none;
+        }
+        
+        .blnz-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .blnz-slider-value {
+            min-width: 25px;
+            text-align: right;
+            color: var(--text-color);
+            font-size: 0.8em;
+        }
+        
+        .blnz-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-family: 'Forum', serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        
+        /* Botones */
+        .blnz-button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-family: 'Forum', serif;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            transition: opacity 0.3s;
+            display: inline-block;
+        }
+        
+        .blnz-button:hover {
+            opacity: 0.9;
+        }
+        
+        .blnz-button-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        /* Formulario */
+        .blnz-contact-form {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 25px;
+            background: var(--light-gray);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .blnz-contact-form h3 {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 10px;
+        }
+        
+        .blnz-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .blnz-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark-gray);
+            font-size: 0.9em;
+        }
+        
+        .blnz-form-group input,
+        .blnz-form-group textarea,
+        .blnz-form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-family: 'Forum', serif;
+            font-size: 0.9em;
+        }
+        
+        .blnz-form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .blnz-submit-btn {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-family: 'Forum', serif;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .blnz-submit-btn:hover {
+            background-color: #c5a030;
+        }
+        
+        /* Scrollbar */
+        .blnz-control-group::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .blnz-control-group::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+        
+        .blnz-control-group::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .blnz-chart-container, .blnz-controls-container {
+                min-width: 100%;
+            }
+            
+            .blnz-flex-container {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Perfil Cualitativo -->
+    <div class="blnz-section" id="blnz-qualitative">
+        <h2 class="blnz-section-title">PERFIL DE VALOR - SUELO PÚBLICO</h2>
+        <div class="blnz-flex-container">
+            <!-- Gráfico a la izquierda -->
+            <div class="blnz-chart-container">
+                <canvas id="blnzQualitativeChart" width="450" height="450"></canvas>
+            </div>
+            
+            <!-- Controles a la derecha -->
+            <div class="blnz-controls-container">
+                <div class="blnz-control-group">
+                    <!-- Variables con descripciones -->
+                    <label>
+                        <span class="blnz-var-title">1. Rendimiento Directo</span>
+                        <span class="blnz-var-desc">Pago por uso del Box (0 nunca - 10 siempre)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-direct" min="0" max="10" value="7">
+                            <span class="blnz-slider-value" id="blnz-direct-value">7</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">2. Rendimiento indirecto</span>
+                        <span class="blnz-var-desc">Aumento de las cuotas de abonado (0 nunca 10 siempre)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-indirect" min="0" max="10" value="6">
+                            <span class="blnz-slider-value" id="blnz-indirect-value">6</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">3. Valor de la Propiedad</span>
+                        <span class="blnz-var-desc">Aumento del valor de la propiedad (0 no - 10 >10%)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-property" min="0" max="10" value="1">
+                            <span class="blnz-slider-value" id="blnz-property-value">1</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">4. Recuperación Ingresos</span>
+                        <span class="blnz-var-desc">Ingresos en otros gim que llegan al box (0 ninguno a 10 todos)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-revenue" min="0" max="10" value="1">
+                            <span class="blnz-slider-value" id="blnz-revenue-value">1</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">5. Conciliación</span>
+                        <span class="blnz-var-desc">Usuarios que no se desplazan (0 ninguno 10 todos)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-trip" min="0" max="10" value="2">
+                            <span class="blnz-slider-value" id="blnz-trip-value">2</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">6. Captación</span>
+                        <span class="blnz-var-desc">Captacion de clientes nuevos (0 ninguna 10 todos)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-hunting" min="0" max="10" value="3">
+                            <span class="blnz-slider-value" id="blnz-hunting-value">3</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">7. Fidelización</span>
+                        <span class="blnz-var-desc">El box sirve para fidelizar clientes actuales (0 no habia 10 todos)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-farmer" min="0" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-farmer-value">5</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">8. Uso privativo/ Actividades</span>
+                        <span class="blnz-var-desc">Open Box /Actividades dirigidas (0 solo box abierto 10 solo actividades dirigidas)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-activities" min="0" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-activities-value">5</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">9. Valor Social</span>
+                        <span class="blnz-var-desc">Punto de Encuentro Social (0 uso privativo 10 uso masivo)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-social" min="0" max="10" value="7">
+                            <span class="blnz-slider-value" id="blnz-social-value">7</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">10. Responsabilidad Social Corporativa</span>
+                        <span class="blnz-var-desc">Becas Vulnerabilidad (0 sin planes 10 sólo planes rsc)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-rsc" min="0" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-rsc-value">5</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">11. Flexibilidad Horarios</span>
+                        <span class="blnz-var-desc">Apertura del box (0 nunca 10 siempre abierto)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-flexibility" min="0" max="10" value="7">
+                            <span class="blnz-slider-value" id="blnz-flexibility-value">7</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">12. Confort</span>
+                        <span class="blnz-var-desc">Acabados de confort (0 solo sport 10 full equipe)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-design" min="0" max="10" value="6">
+                            <span class="blnz-slider-value" id="blnz-design-value">6</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">13. Sostenibilidad</span>
+                        <span class="blnz-var-desc">Eficiencia energética- Certificaciones (0 Ninguna- 10 Autogestión)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-sostainability" min="0" max="10" value="8">
+                            <span class="blnz-slider-value" id="blnz-sostainability-value">8</span>
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">14. Oportunidad</span>
+                        <span class="blnz-var-desc">Infraestructura (0 espacio nuevo 10 aumento instalación existente)</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-opportunity" min="0" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-opportunity-value">5</span>
+                        </div>
+                    </label>
+                </div>
+                <button id="blnz-reset-qualitative-btn" class="blnz-button">Reiniciar a perfil medio</button>
+                <button id="blnz-save-qualitative-btn" class="blnz-button blnz-button-secondary">Guardar perfil cualitativo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Perfil Cuantitativo -->
+    <div class="blnz-section" id="blnz-quantitative">
+        <h2 class="blnz-section-title">CONFIGURACIÓN DE BOX - SUELO PÚBLICO</h2>
+        <div class="blnz-flex-container">
+            <!-- Gráfico a la izquierda -->
+            <div class="blnz-chart-container">
+                <canvas id="blnzQuantitativeChart" width="450" height="450"></canvas>
+            </div>
+            
+            <!-- Controles a la derecha -->
+            <div class="blnz-controls-container">
+                <!-- Selector de paquetes -->
+                <div class="blnz-control-group">
+                    <label>
+                        <span class="blnz-var-title">Seleccionar paquete predefinido</span>
+                        <span class="blnz-var-desc">Elija un paquete para autocompletar la configuración</span>
+                        <select id="blnz-package-select" class="blnz-select">
+                            <option value="custom">Personalizado</option>
+                            <option value="soft">1. Gimnasia Suave</option>
+                            <option value="intense">2. Gimnasia Intensa</option>
+                            <option value="muscle">3. Musculación</option>
+                            <option value="crossfit">4. CrossFit</option>
+                            <option value="hyrox">5. Hyrox</option>
+                            <option value="racket">6. Raqueta</option>
+                            <option value="rugby">7. Rugby</option>
+                            <option value="football">8. Fútbol</option>
+                            <option value="house">9. Vivienda Unifamiliar</option>
+                            <option value="neighbors">10. Comunidad de Vecinos</option>
+                            <option value="business">11. Empresas</option>
+                            <option value="school">12. Colegios</option>
+                            <option value="university">13. Universitarios</option>
+                        </select>
+                    </label>
+                </div>
+                
+                <!-- Controles deslizantes para cada categoría -->
+                <div class="blnz-control-group" style="max-height: 400px;">
+                    <label>
+                        <span class="blnz-var-title">1. Fuerza</span>
+                        <span class="blnz-var-desc">Equipamiento para desarrollo de fuerza</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-strength" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-strength-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Balón medicinal o wall ball, Barra, Barra montada, Barra montada Body Pump, Bumper, Bumper con agarre, Hex Bar (Trap Bar), Kettlebell (Kettle), Mancuernas, Power Bands, Saco búlgaro, Sled Harness, Strongman Log
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">2. Resistencia Cardiovascular</span>
+                        <span class="blnz-var-desc">Equipamiento para entrenamiento cardiovascular</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-cardio" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-cardio-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Assault AirBike, Bike, Cuerda de batalla (Battle Rope), Elíptica, Ergómetro de brazo, Gomas de resistencia, Paracaídas, Rowing (Remo), Running, SandRope, SkiErg, Trineo
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">3. Equilibrio</span>
+                        <span class="blnz-var-desc">Elementos para trabajo de equilibrio</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-balance" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-balance-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Block Yoga, Bosu, Columpio Yoga, Gym Balls, Plataformas de Equilibrio, Roller, Sliders (Discos Deslizantes)
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">4. Potencia</span>
+                        <span class="blnz-var-desc">Equipamiento para desarrollo de potencia</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-power" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-power-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Balón medicinal, Cajón pliométrico, Cuerda de batalla, Martillo de Entrenamiento (Sledgehammer), Neumático de CrossFit, Saco búlgaro
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">5. Movilidad</span>
+                        <span class="blnz-var-desc">Elementos para trabajo de movilidad</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-mobility" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-mobility-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Aro Pilates, Bandas elásticas, Bands Stick (Bastón con Bandas de Resistencia), Bastones de Movilidad, Bolas de Pilates, Bolas de Yoga, Colchonetas, Pelota de lacrosse
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">6. Circuitos Funcionales</span>
+                        <span class="blnz-var-desc">Equipamiento para circuitos funcionales</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-circuits" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-circuits-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Barreras de Velocidad, Cuerda de batalla, Gomas de resistencia, Kit de suspensión (TRX, anillas, etc.), Sandbags (Bolsas de Arena), Step
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">7. Agilidad</span>
+                        <span class="blnz-var-desc">Elementos para trabajo de agilidad</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-agility" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-agility-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Balones de Reacción, Cinturón de placaje, Conos, Dummies de Impacto, Escalera de agilidad, Escudo de tackle, Vallas
+                        </div>
+                    </label>
+
+                    <label>
+                        <span class="blnz-var-title">8. Equipamiento Funcional</span>
+                        <span class="blnz-var-desc">Equipamiento funcional diverso</span>
+                        <div class="blnz-slider-container">
+                            <input type="range" class="blnz-slider" id="blnz-equipment" min="1" max="10" value="5">
+                            <span class="blnz-slider-value" id="blnz-equipment-value">5</span>
+                        </div>
+                        <div class="blnz-materials-list">
+                            Ab Wheel, Anillas de Gimnasia, Cuerda de escalada o resistencia, Cuerda de trepa, Dominadas (Barra de dominadas), Saco Boxeo, Weighted Vest (Chaleco con Peso)
+                        </div>
+                    </label>
+                </div>
+                
+                <button id="blnz-reset-quantitative-btn" class="blnz-button">Reiniciar a valores medios</button>
+                <button id="blnz-save-quantitative-btn" class="blnz-button blnz-button-secondary">Guardar perfil cuantitativo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario de contacto -->
+    <div class="blnz-contact-form">
+        <h3>SOLICITUD DE INFORMACIÓN - SUELO PÚBLICO</h3>
+            <form id="blnz-info-request-form" action="https://formsubmit.co/jose.garciadeleaniz@gmail.com" method="POST">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <input type="hidden" name="_subject" value="Nueva solicitud BLNZ">
+            <div class="blnz-form-group">
+                <label for="blnz-name">Nombre completo*</label>
+                <input type="text" id="blnz-name" name="name" required>
+            </div>
+            
+            <div class="blnz-form-group">
+                <label for="blnz-email">Correo electrónico*</label>
+                <input type="email" id="blnz-email" name="email" required>
+            </div>
+            
+            <div class="blnz-form-group">
+                <label for="blnz-phone">Teléfono</label>
+                <input type="tel" id="blnz-phone" name="phone">
+            </div>
+            
+            <div class="blnz-form-group">
+                <label for="blnz-company">Empresa/Organización</label>
+                <input type="text" id="blnz-company" name="company">
+            </div>
+            
+            <div class="blnz-form-group">
+                <label for="blnz-client-type">Tipo de cliente</label>
+                <input type="text" id="blnz-client-type" name="client_type" value="Suelo Público" readonly>
+            </div>
+            
+            <!-- Datos cualitativos ocultos -->
+            <div class="blnz-form-group" style="display: none;">
+                <label for="blnz-qualitative-data">Perfil Cualitativo</label>
+                <textarea id="blnz-qualitative-data" name="qualitative_data"></textarea>
+            </div>
+            
+            <!-- Datos cuantitativos ocultos -->
+            <div class="blnz-form-group" style="display: none;">
+                <label for="blnz-package-type">Tipo de paquete</label>
+                <input type="text" id="blnz-package-type" name="package_type">
+            </div>
+            
+            <div class="blnz-form-group" style="display: none;">
+                <label for="blnz-quantitative-data">Configuración Cuantitativa</label>
+                <textarea id="blnz-quantitative-data" name="quantitative_data"></textarea>
+            </div>
+            
+            <div class="blnz-form-group">
+                <label for="blnz-message">Mensaje adicional</label>
+                <textarea id="blnz-message" name="message"></textarea>
+            </div>
+            
+            <button type="submit" class="blnz-submit-btn">Enviar solicitud</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Esperar a que se cargue Chart.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar ambos gráficos
+            initQualitativeChart();
+            initQuantitativeChart();
+            
+            // Configurar eventos de los botones de guardado
+            setupSaveButtons();
+            
+            // Configurar el formulario
+            setupForm();
+        });
+
+        // =============================================
+        // PERFIL CUALITATIVO
+        // =============================================
+        function initQualitativeChart() {
+            const ctx = document.getElementById('blnzQualitativeChart').getContext('2d');
+            
+            // Valores por defecto específicos para Suelo Público
+            const defaultValues = [7, 6, 1, 1, 2, 3, 5, 5, 7, 5, 7, 6, 8, 5];
+            const userValues = [...defaultValues];
+            
+            // Configuración del Radar Chart
+            const qualitativeChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Rendimiento Directo',
+                        'Rendimiento Indirecto',
+                        'Valor Propiedad',
+                        'Recuperación Ingresos',
+                        'Conciliación',
+                        'Captación',
+                        'Fidelización',
+                        'Uso privativo/Actividades',
+                        'Valor Social',
+                        'RSC',
+                        'Flexibilidad Horarios',
+                        'Diseño/Estética',
+                        'Sostenibilidad',
+                        'Oportunidad'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Referencia',
+                            data: defaultValues,
+                            backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                            borderColor: '#D4AF37',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#D4AF37',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Tu ajuste',
+                            data: userValues,
+                            backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                            borderColor: '#E63946',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#E63946',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            pointLabels: { 
+                                color: '#000',
+                                font: {
+                                    family: 'Forum',
+                                    size: 11
+                                },
+                                padding: 10
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: 'Forum',
+                                    size: 12
+                                },
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Mapeo de controles cualitativos
+            const qualitativeControls = [
+                { id: 'blnz-direct', index: 0, value: 7 },
+                { id: 'blnz-indirect', index: 1, value: 6 },
+                { id: 'blnz-property', index: 2, value: 1 },
+                { id: 'blnz-revenue', index: 3, value: 1 },
+                { id: 'blnz-trip', index: 4, value: 2 },
+                { id: 'blnz-hunting', index: 5, value: 3 },
+                { id: 'blnz-farmer', index: 6, value: 5 },
+                { id: 'blnz-activities', index: 7, value: 5 },
+                { id: 'blnz-social', index: 8, value: 7 },
+                { id: 'blnz-rsc', index: 9, value: 5 },
+                { id: 'blnz-flexibility', index: 10, value: 7 },
+                { id: 'blnz-design', index: 11, value: 6 },
+                { id: 'blnz-sostainability', index: 12, value: 8 },
+                { id: 'blnz-opportunity', index: 13, value: 5 }
+            ];
+
+            // Configurar eventos para los sliders cualitativos
+            qualitativeControls.forEach(control => {
+                const slider = document.getElementById(control.id);
+                const valueDisplay = document.getElementById(`${control.id}-value`);
+                
+                slider.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    userValues[control.index] = value;
+                    valueDisplay.textContent = value;
+                    qualitativeChart.update();
+                });
+            });
+
+            // Botón de reinicio cualitativo
+            document.getElementById('blnz-reset-qualitative-btn').addEventListener('click', function() {
+                qualitativeControls.forEach(control => {
+                    const slider = document.getElementById(control.id);
+                    const valueDisplay = document.getElementById(`${control.id}-value`);
+                    
+                    slider.value = control.value;
+                    valueDisplay.textContent = control.value;
+                    userValues[control.index] = control.value;
+                });
+                qualitativeChart.update();
+            });
+
+            // Función para obtener los datos cualitativos como texto
+            function getQualitativeData() {
+                let data = "";
+                qualitativeControls.forEach(control => {
+                    const label = qualitativeChart.data.labels[control.index];
+                    const value = document.getElementById(`${control.id}-value`).textContent;
+                    data += `${label}: ${value}\n`;
+                });
+                return data;
+            }
+
+            // Guardar referencia para uso externo
+            window.blnzQualitativeChart = qualitativeChart;
+            window.getQualitativeData = getQualitativeData;
+        }
+
+        // =============================================
+        // PERFIL CUANTITATIVO
+        // =============================================
+        function initQuantitativeChart() {
+            const ctx = document.getElementById('blnzQuantitativeChart').getContext('2d');
+            
+            // Definición de paquetes preconfigurados
+            const blnzPackages = {
+                soft: {         // Gimnasia Suave
+                    strength: 3,
+                    cardio: 4,
+                    balance: 9,
+                    power: 2,
+                    mobility: 8,
+                    circuits: 5,
+                    agility: 3,
+                    equipment: 6
+                },
+                intense: {      // Gimnasia Intensa
+                    strength: 6,
+                    cardio: 9,
+                    balance: 5,
+                    power: 7,
+                    mobility: 6,
+                    circuits: 8,
+                    agility: 7,
+                    equipment: 7
+                },
+                muscle: {       // Musculación
+                    strength: 10,
+                    cardio: 3,
+                    balance: 4,
+                    power: 8,
+                    mobility: 5,
+                    circuits: 4,
+                    agility: 3,
+                    equipment: 6
+                },
+                crossfit: {     // CrossFit
+                    strength: 8,
+                    cardio: 8,
+                    balance: 6,
+                    power: 9,
+                    mobility: 7,
+                    circuits: 9,
+                    agility: 7,
+                    equipment: 8
+                },
+                hyrox: {        // Hyrox
+                    strength: 7,
+                    cardio: 10,
+                    balance: 5,
+                    power: 7,
+                    mobility: 6,
+                    circuits: 9,
+                    agility: 8,
+                    equipment: 7
+                },
+                racket: {       // Raqueta
+                    strength: 5,
+                    cardio: 7,
+                    balance: 8,
+                    power: 6,
+                    mobility: 7,
+                    circuits: 6,
+                    agility: 9,
+                    equipment: 5
+                },
+                rugby: {        // Rugby
+                    strength: 8,
+                    cardio: 7,
+                    balance: 6,
+                    power: 9,
+                    mobility: 6,
+                    circuits: 7,
+                    agility: 8,
+                    equipment: 7
+                },
+                football: {     // Fútbol
+                    strength: 6,
+                    cardio: 9,
+                    balance: 7,
+                    power: 6,
+                    mobility: 7,
+                    circuits: 6,
+                    agility: 9,
+                    equipment: 5
+                },
+                house: {        // Vivienda Unifamiliar
+                    strength: 5,
+                    cardio: 6,
+                    balance: 7,
+                    power: 4,
+                    mobility: 8,
+                    circuits: 5,
+                    agility: 4,
+                    equipment: 6
+                },
+                neighbors: {    // Comunidad de Vecinos
+                    strength: 4,
+                    cardio: 5,
+                    balance: 8,
+                    power: 3,
+                    mobility: 7,
+                    circuits: 6,
+                    agility: 5,
+                    equipment: 5
+                },
+                business: {     // Empresas
+                    strength: 4,
+                    cardio: 6,
+                    balance: 7,
+                    power: 4,
+                    mobility: 8,
+                    circuits: 7,
+                    agility: 5,
+                    equipment: 6
+                },
+                school: {       // Colegios
+                    strength: 3,
+                    cardio: 7,
+                    balance: 8,
+                    power: 4,
+                    mobility: 7,
+                    circuits: 7,
+                    agility: 8,
+                    equipment: 5
+                },
+                university: {   // Universitarios
+                    strength: 6,
+                    cardio: 8,
+                    balance: 7,
+                    power: 5,
+                    mobility: 7,
+                    circuits: 8,
+                    agility: 7,
+                    equipment: 6
+                }
+            };
+
+            // Valores iniciales (personalizado)
+            const currentValues = {
+                strength: 5,
+                cardio: 5,
+                balance: 5,
+                power: 5,
+                mobility: 5,
+                circuits: 5,
+                agility: 5,
+                equipment: 5
+            };
+            
+            // Valores medios (para comparación)
+            const defaultValues = {...currentValues};
+            
+            // Configuración del Radar Chart
+            const quantitativeChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Fuerza',
+                        'Resistencia Cardio',
+                        'Equilibrio',
+                        'Potencia',
+                        'Movilidad',
+                        'Circuitos Func.',
+                        'Agilidad',
+                        'Equipamiento Func.'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Configuración del Box',
+                            data: Object.values(currentValues),
+                            backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                            borderColor: '#D4AF37',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#D4AF37',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Valores modificados',
+                            data: Array(8).fill(null),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            pointLabels: { 
+                                color: '#000',
+                                font: {
+                                    family: 'Forum',
+                                    size: 11
+                                },
+                                padding: 10
+                            },
+                            suggestedMin: 1,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Mapeo de controles cuantitativos
+            const quantitativeControls = [
+                { id: 'blnz-strength', key: 'strength', value: 5 },
+                { id: 'blnz-cardio', key: 'cardio', value: 5 },
+                { id: 'blnz-balance', key: 'balance', value: 5 },
+                { id: 'blnz-power', key: 'power', value: 5 },
+                { id: 'blnz-mobility', key: 'mobility', value: 5 },
+                { id: 'blnz-circuits', key: 'circuits', value: 5 },
+                { id: 'blnz-agility', key: 'agility', value: 5 },
+                { id: 'blnz-equipment', key: 'equipment', value: 5 }
+            ];
+
+            // Función para actualizar el gráfico con los cambios
+            function updateQuantitativeChart(values) {
+                // Datos base (valores medios)
+                quantitativeChart.data.datasets[0].data = Object.values(defaultValues);
+                
+                // Datos modificados (solo los que difieren de los valores medios)
+                const modifiedData = Object.keys(values).map((key, index) => {
+                    return values[key] !== defaultValues[key] ? values[key] : null;
+                });
+                
+                quantitativeChart.data.datasets[1].data = modifiedData;
+                quantitativeChart.update();
+            }
+
+            // Configurar eventos para los sliders cuantitativos
+            quantitativeControls.forEach(control => {
+                const slider = document.getElementById(control.id);
+                const valueDisplay = document.getElementById(`${control.id}-value`);
+                
+                slider.addEventListener('input', function() {
+                    const value = parseInt(this.value);
+                    currentValues[control.key] = value;
+                    valueDisplay.textContent = value;
+                    
+                    // Actualizar gráfico
+                    updateQuantitativeChart(currentValues);
+                    
+                    // Cambiar a personalizado si se modifica manualmente
+                    document.getElementById('blnz-package-select').value = 'custom';
+                });
+            });
+
+            // Selector de paquetes
+            document.getElementById('blnz-package-select').addEventListener('change', function() {
+                if (this.value !== 'custom') {
+                    const selectedPackage = blnzPackages[this.value];
+                    
+                    // Actualizar sliders y valores
+                    quantitativeControls.forEach(control => {
+                        const slider = document.getElementById(control.id);
+                        const valueDisplay = document.getElementById(`${control.id}-value`);
+                        const newValue = selectedPackage[control.key];
+                        
+                        slider.value = newValue;
+                        valueDisplay.textContent = newValue;
+                        currentValues[control.key] = newValue;
+                    });
+                    
+                    // Actualizar gráfico
+                    updateQuantitativeChart(currentValues);
+                }
+            });
+
+            // Botón de reinicio cuantitativo
+            document.getElementById('blnz-reset-quantitative-btn').addEventListener('click', function() {
+                quantitativeControls.forEach(control => {
+                    const slider = document.getElementById(control.id);
+                    const valueDisplay = document.getElementById(`${control.id}-value`);
+                    
+                    slider.value = control.value;
+                    valueDisplay.textContent = control.value;
+                    currentValues[control.key] = control.value;
+                });
+                
+                // Resetear selector
+                document.getElementById('blnz-package-select').value = 'custom';
+                
+                // Actualizar gráfico
+                updateQuantitativeChart(currentValues);
+            });
+
+            // Función para obtener los datos cuantitativos como texto
+            function getQuantitativeData() {
+                const packageSelect = document.getElementById('blnz-package-select');
+                const selectedPackage = packageSelect.options[packageSelect.selectedIndex].text;
+                
+                let data = `Paquete seleccionado: ${selectedPackage === 'Personalizado' ? 'Configuración personalizada' : selectedPackage}\n\n`;
+                
+                for(const key in currentValues) {
+                    const label = quantitativeChart.data.labels[Object.keys(currentValues).indexOf(key)];
+                    data += `${label}: ${currentValues[key]}\n`;
+                }
+                
+                return data;
+            }
+
+            // Función para obtener el tipo de paquete seleccionado
+            function getSelectedPackage() {
+                const packageSelect = document.getElementById('blnz-package-select');
+                return packageSelect.options[packageSelect.selectedIndex].text;
+            }
+
+            // Guardar referencias para uso externo
+            window.blnzQuantitativeChart = quantitativeChart;
+            window.getQuantitativeData = getQuantitativeData;
+            window.getSelectedPackage = getSelectedPackage;
+        }
+
+        // =============================================
+        // CONFIGURACIÓN DE BOTONES Y FORMULARIO
+        // =============================================
+        function setupSaveButtons() {
+            // Botón para guardar perfil cualitativo
+            document.getElementById('blnz-save-qualitative-btn').addEventListener('click', function() {
+                document.getElementById('blnz-qualitative-data').value = getQualitativeData();
+                alert('Perfil cualitativo guardado. Ahora puedes enviar el formulario.');
+            });
+            
+            // Botón para guardar perfil cuantitativo
+            document.getElementById('blnz-save-quantitative-btn').addEventListener('click', function() {
+                document.getElementById('blnz-quantitative-data').value = getQuantitativeData();
+                document.getElementById('blnz-package-type').value = getSelectedPackage();
+                alert('Perfil cuantitativo guardado. Ahora puedes enviar el formulario.');
+            });
+        }
+
+        function setupForm() {
+            // Manejar el envío del formulario
+            document.getElementById('blnz-info-request-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validar que se han guardado los perfiles
+                const qualitativeData = document.getElementById('blnz-qualitative-data').value;
+                const quantitativeData = document.getElementById('blnz-quantitative-data').value;
+                
+                if(!qualitativeData || !quantitativeData) {
+                    alert('Por favor, guarda ambos perfiles (cualitativo y cuantitativo) antes de enviar el formulario.');
+                    return;
+                }
+                
+                // Aquí puedes agregar código para enviar el formulario
+                // Por ejemplo, usando Fetch API o formspree
+                
+                // Ejemplo con Formspree (necesitas configurar tu cuenta)
+                const formData = new FormData(this);
+                
+                fetch('https://formspree.io/f/info@blnz.es', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Solicitud enviada correctamente. Nos pondremos en contacto contigo pronto.');
+                        this.reset();
+                    } else {
+                        throw new Error('Error en el envío');
+                    }
+                })
+                .catch(error => {
+                    alert('Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo más tarde.');
+                    console.error('Error:', error);
+                });
+                
+                // Alternativa: enviar por correo (necesita backend)
+                // window.location.href = `mailto:info@blnz.es?subject=Solicitud%20de%20información%20-%20Suelo%20Público&body=${encodeURIComponent(getFormDataAsText())}`;
+            });
+        }
+
+        // Función para obtener todos los datos del formulario como texto
+        function getFormDataAsText() {
+            const form = document.getElementById('blnz-info-request-form');
+            let text = 'SOLICITUD DE INFORMACIÓN - SUELO PÚBLICO\n\n';
+            
+            // Datos personales
+            text += `Nombre: ${form.elements['name'].value}\n`;
+            text += `Email: ${form.elements['email'].value}\n`;
+            text += `Teléfono: ${form.elements['phone'].value || 'No proporcionado'}\n`;
+            text += `Empresa: ${form.elements['company'].value || 'No proporcionada'}\n\n`;
+            
+            // Datos cualitativos
+            text += '--- PERFIL CUALITATIVO ---\n';
+            text += form.elements['qualitative_data'].value + '\n\n';
+            
+            // Datos cuantitativos
+            text += '--- CONFIGURACIÓN CUANTITATIVA ---\n';
+            text += `Tipo de paquete: ${form.elements['package_type'].value}\n\n`;
+            text += form.elements['quantitative_data'].value + '\n\n';
+            
+            // Mensaje adicional
+            if(form.elements['message'].value) {
+                text += '--- MENSAJE ADICIONAL ---\n';
+                text += form.elements['message'].value + '\n';
+            }
+            
+            return text;
+        }
+    </script>
+</body>
+</html>
